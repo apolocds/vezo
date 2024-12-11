@@ -1,17 +1,14 @@
-# Dicionário que serve como banco de dados
 usuarios = {}
 
-# Função para validar a quantidade de caracteres da senha
 def validar_senha(senha):
     return len(senha) >= 8
 
-# Cadastro de usuário
 def cadastrar_usuario():
     print("\n--- Cadastro de Usuário ---")
-    nome = None  # Inicializa o nome como None
+    nome = None  # inicializa nome = none para validação de campo preenchido
 
     while True:
-        # Solicita o nome de usuário apenas se ainda não for válido
+        # solicita o nome de usuário apenas se ainda não for válido
         if not nome:
             nome = input("Digite um nome de usuário: ").strip()
             if not nome:
@@ -23,19 +20,17 @@ def cadastrar_usuario():
                 nome = None
                 continue
         
-        # Solicita a senha
         senha = input("Digite uma senha (mínimo 8 caracteres): ").strip()
         if not validar_senha(senha):
             print("Senha inválida. Deve ter pelo menos 8 caracteres.")
             continue
         
-        # Confirmação da senha
         senha_confirmada = input("Confirme a senha: ").strip()
         if senha != senha_confirmada:
             print("As senhas não coincidem. Tente novamente.")
             continue
 
-        # Caso final: entrada válida
+        # caso final
         usuarios[nome] = {"senha": senha}
         print(f"Usuário '{nome}' cadastrado com sucesso!")
         break
@@ -51,7 +46,6 @@ def login():
     print("Credenciais inválidas. Tente novamente.")
     return None
 
-# Menu principal
 def menu():
     while True:
         print("\n--- Menu ---")
@@ -64,10 +58,8 @@ def menu():
             cadastrar_usuario()
         elif opcao == "2":
             usuario_atual = login()
-            if usuario_atual:
-                print(f"Você está logado como {usuario_atual}.")
         elif opcao == "0":
-            print("Encerrando o programa. Até mais!")
+            print("Encerrando...")
             break
         else:
             print("Opção inválida.")
