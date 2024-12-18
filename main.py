@@ -149,7 +149,7 @@ def adicionar_atividade(usuario):  # create
     print(f"\nAtividade '{nome_atividade}' adicionada com sucesso!")
 
 def mostrar_atividades(usuario):  # read
-    """Função que exibe as atividades do usuário, incluindo itens do checklist, se houver."""
+    """Função que exibe as atividades do usuário e os itens do checklist"""
     print("\n--- Atividades Cadastradas ---")
     atividades = usuarios[usuario]["atividades"]
 
