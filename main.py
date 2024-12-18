@@ -1,5 +1,10 @@
 # dicionário que serve como banco de dados
-usuarios = {}
+usuarios = {
+    "apolo": {
+        "senha": "12345678",
+        "atividades": []
+    }
+}
 
 def validar_senha(senha):
     """Função para validar a quantidade de caracteres inseridos pelo usuário"""
@@ -12,24 +17,24 @@ def cadastrar_usuario():
 
     while True:
         if not nome:
-            nome = input("Digite um nome de usuário: ").strip()
+            nome = input("\nDigite um nome de usuário: ").strip()
             if not nome:
-                print("Nome de usuário não pode estar vazio. Insira um nome válido.")
+                print("\nNome de usuário não pode estar vazio. Insira um nome válido.")
                 nome = None
                 continue 
             if nome in usuarios:
-                print("Nome de usuário já existe. Escolha outro.")
+                print("\nNome de usuário já existe. Escolha outro.")
                 nome = None
                 continue
         
-        senha = input("Digite uma senha (mínimo 8 caracteres): ").strip()
+        senha = input("\nDigite uma senha (mínimo 8 caracteres): ").strip()
         if not validar_senha(senha):
-            print("Senha inválida. Deve ter pelo menos 8 caracteres.")
+            print("\nSenha inválida. Deve ter pelo menos 8 caracteres.")
             continue
         
-        senha_confirmada = input("Confirme a senha: ").strip()
+        senha_confirmada = input("\nConfirme a senha: ").strip()
         if senha != senha_confirmada:
-            print("As senhas não coincidem. Tente novamente.")
+            print("\nAs senhas não coincidem. Tente novamente.")
             continue
 
         usuarios[nome] = {"senha": senha, "atividades": []} # create
@@ -44,75 +49,138 @@ def login():
     senha = input("Senha: ").strip()
     
     if nome in usuarios and usuarios[nome]["senha"] == senha:
-        print(f"Bem-vindo, {nome}!")
+        print(f"\nBem-vindo, {nome}!")
         return nome
-    print("Credenciais inválidas. Tente novamente.")
+    print("\nCredenciais inválidas. Tente novamente.")
     return None
 
-def adicionar_atividade(usuario): # create
+def adicionar_atividade(usuario):  # create
     """Função que adiciona uma atividade ao dicionário do usuário logado"""
     print("\n--- Adicionar Atividade ---")
-    nome_atividade = input("Nome da Atividade: ").strip()
+    nome_atividade = input("\nNome da Atividade: ").strip()
     if not nome_atividade:
-        print("Nome da atividade não pode estar vazio.")
+        print("\nNome da atividade não pode estar vazio.")
         return
 
-    tipo = input("Frequência:\n[1] Hábito (atividade que se repete)\n[2] Tarefa (atividade única): ").strip()
-    if tipo not in ("1", "2"):
-        print("Opção inválida.")
+    print("\nTipo de Atividade:")
+    print("[1] Hábito (atividade que se repete)")
+    print("[2] Tarefa (atividade única)")
+    print("[3] Checklist (lista de itens a serem concluídos)")
+    tipo = input("\nEscolha o tipo: ").strip()
+    
+    if tipo not in ("1", "2", "3"):
+        print("\n *Opção inválida.")
         return
 
     frequencia = None
     dias_especificos = None
-    if tipo == "1":
-        frequencia = input("\nCom que frequência você deseja realizar esse hábito:\n[1] Todos os dias\n[2] Dias específicos: ").strip()
-        if frequencia == "2":
-            print("\nEscolha os dias da semana (exemplo: 2,4,6 para segunda, quarta e sexta):")
-            dias_opcoes = ["[1] Domingo", "[2] Segunda", "[3] Terça", "[4] Quarta", 
-                           "[5] Quinta", "[6] Sexta", "[7] Sábado"]
-            print("\n".join(dias_opcoes))
-            dias_especificos = input("Dias: ").strip().split(',')
-            dias_especificos = [int(dia) for dia in dias_especificos if dia.isdigit() and 1 <= int(dia) <= 7]
-            # ↑ valida a entrada do usuário garantindo que o valor recebido seja um  valor numérico, converte o valor de str para int e garante que esteja entre 1 e 7, se a entrada não for convertida a comparação não pode ser feita 
+    checklist = []
 
-            if not dias_especificos:
-                print("Opção inválida. Frequência definida como 'Todos os dias'.")
+    if tipo == "1":  # hábito
+        print("\nCom que frequência você deseja realizar esse hábito:")
+        print("[1] Todos os dias")
+        print("[2] Dias específicos")
+        frequencia = input("\nEscolha uma opção: ").strip()
+
+        if frequencia == "2": # dias específicos
+            print("\nEscolha os dias da semana (exemplo: 2,4,6 para segunda, quarta e sexta):")
+            print("[1] Domingo")
+            print("[2] Segunda")
+            print("[3] Terça")
+            print("[4] Quarta")
+            print("[5] Quinta")
+            print("[6] Sexta")
+            print("[7] Sábado")
+
+            dias_input = input("\nInforme os números dos dias separados por vírgula: ").strip()
+            dias_especificos = dias_input.split(',')
+            dias_validos = []
+
+            for dia in dias_especificos:
+                if dia.isdigit():  # verifica se é um número
+                    numero_dia = int(dia)
+                    if 1 <= numero_dia <= 7:  # verifica se está entre 1 e 7
+                        dias_validos.append(numero_dia)
+
+            if not dias_validos:
+                print("\nNenhum dia válido selecionado. Frequência definida como 'Todos os dias'.")
                 frequencia = "1"
+            else:
+                dias_especificos = dias_validos
+        else:
+            dias_especificos = None
+
+    elif tipo == "3":  # checklist
+        print("\nInsira os itens do checklist (digite 'fim' para encerrar):")
+        checklist = []
+        while True:
+            item = input("Item: ").strip()
+            if item.lower() == "fim":
+                break
+            elif item:  # verifica se não está vazio
+                checklist.append({"item": item, "concluido": False})
+            else:
+                print("O item não pode estar vazio. Tente novamente.")
+
+# adicionando a atividade ao dicionário
+
+    if tipo == "1":
+        tipo_atividade = "Hábito"
+    elif tipo == "2":
+        tipo_atividade = "Tarefa"
+    elif tipo == "3":
+        tipo_atividade = "Checklist"
+
+    if frequencia == "1":
+        frequencia_atividade = "Todos os dias"
+    elif frequencia == "2":
+        frequencia_atividade = "Dias específicos"
+    else:
+        frequencia_atividade = None
 
     usuarios[usuario]["atividades"].append({
         "nome": nome_atividade,
-        "tipo": "Hábito" if tipo == "1" else "Tarefa",
-        "frequencia": "Todos os dias" if frequencia == "1" else "Dias específicos" if frequencia == "2" else None,
-        "dias_especificos": dias_especificos if frequencia == "2" else None,
+        "tipo": tipo_atividade,
+        "frequencia": frequencia_atividade,
+        "dias_especificos": dias_especificos if tipo == "1" and frequencia == "2" else None,
+        "checklist": checklist if tipo == "3" else None,
         "historico": []
     })
-    print(f"Atividade '{nome_atividade}' adicionada com sucesso!")
 
-def listar_atividades(usuario): # read
-    """Função que exibe as atividades do usuário"""
+    print(f"\nAtividade '{nome_atividade}' adicionada com sucesso!")
+
+def mostrar_atividades(usuario):  # read
+    """Função que exibe as atividades do usuário, incluindo itens do checklist, se houver."""
     print("\n--- Atividades Cadastradas ---")
     atividades = usuarios[usuario]["atividades"]
+
     if not atividades:
-        print("Nenhuma atividade cadastrada.")
+        print("\nNenhuma atividade cadastrada.")
         return
 
     for i, atividade in enumerate(atividades, 1):
         print(f"[{i}] {atividade['nome']} ({atividade['tipo']})")
-    # linha para printar as atividades numeradas
+        
+        # se a atividade for do tipo checklist exibe os itens
+        if atividade["tipo"] == "Checklist" and "checklist" in atividade:
+            print("\n  Itens do Checklist:")
+            for item in atividade["checklist"]:
+                status = "Concluído" if item["concluido"] else "Pendente"
+                print(f"    - {item['item']} ({status})")
 
 def edit_delete_atividade(usuario): # update e delete
 
-    # o edit está sem a opção de trocar uma tarefa única para um hábito e trocar os dias específicos de um hábito 
+    # o edit está sem a opção de trocar uma tarefa única para um hábito, trocar os dias específicos de um hábito, adicionar itens a um checklist
 
     """Função que permite o usuário editar ou excluir atividades do dicionário"""
-    listar_atividades(usuario)
+    mostrar_atividades(usuario)
     atividades = usuarios[usuario]["atividades"]
     if not atividades:
         return
 
-    escolha = input("Escolha o número da atividade que deseja atualizar ou excluir: ").strip()
+    escolha = input("\nEscolha o número da atividade que deseja atualizar ou excluir: ").strip()
     if not escolha.isdigit() or int(escolha) not in range(1, len(atividades) + 1):
-        print("Opção inválida.")
+        print("\n *Opção inválida.")
         return
 
     escolha = int(escolha) - 1
@@ -125,60 +193,97 @@ def edit_delete_atividade(usuario): # update e delete
         novo_nome = input("Novo nome para a atividade: ").strip()
         if novo_nome:
             atividades[escolha]["nome"] = novo_nome
-            print("Atividade atualizada com sucesso!")
+            print("\nAtividade atualizada com sucesso!")
         else:
-            print("O nome não pode ser vazio.")
+            print("\nO nome não pode ser vazio.")
     elif acao == "2":
         atividades.pop(escolha)
-        print("Atividade excluída com sucesso!")
+        print("\nAtividade excluída com sucesso!")
     else:
-        print("Ação inválida.")
+        print("\nAção inválida.")
 
 
 def marcar_concluida(usuario):
     """Função que permite ao usuário marcar as atividades como concluídas"""
-    listar_atividades(usuario)
+    mostrar_atividades(usuario)
     atividades = usuarios[usuario]["atividades"]
     if not atividades:
         return
 
-    escolha = input("Escolha o número da atividade que deseja marcar como concluída: ").strip()
+    escolha = input("\nEscolha o número da atividade que deseja marcar como concluída: ").strip()
     if not escolha.isdigit() or int(escolha) not in range(1, len(atividades) + 1):
-        print("Opção inválida.")
+        print("\n *Opção inválida.")
         return
 
     escolha = int(escolha) - 1
     atividade = atividades[escolha]
-    data = input("Informe a data da conclusão: ").strip()
-    atividade["historico"].append(data)
-    print(f"Atividade '{atividade['nome']}' marcada como concluída em {data}!")
+    
+    if atividade["tipo"] == "Checklist":
+        # se for uma Checklist mostra os itens
+        print(f"\nAtividade: {atividade['nome']}")
+        print("Itens do checklist:")
+        for i, item in enumerate(atividade["checklist"], 1):
+            status = "Concluído" if item["concluido"] else "Pendente"
+            print(f"[{i}] {item['item']} - {status}")
+        
+        # pergunta ao usuário qual item ele deseja marcar como concluído
+        item_escolhido = input("\nEscolha o número do item para marcar como concluído ou digite 'fim' para finalizar: ").strip()
+        if item_escolhido.lower() == "fim":
+            print("\nOperação finalizada.")
+            return
 
-    if atividade["tipo"] == "Tarefa":
-        atividades.pop(escolha)
-    # ↑ linha para atividades que o usuário cadastra como únicas, depois de concluídas são apagadas do bd
+        if not item_escolhido.isdigit() or int(item_escolhido) not in range(1, len(atividade["checklist"]) + 1):
+            print("\n *Opção inválida.")
+            return
+
+        item_escolhido = int(item_escolhido) - 1
+        atividade["checklist"][item_escolhido]["concluido"] = True
+        print(f"\nItem '{atividade['checklist'][item_escolhido]['item']}' marcado como concluído!")
+
+    else: # caso a atividade não seja do tipo checklist, marca a atividade como concluída normalmente
+        data = input("\nInforme a data da conclusão: ").strip()
+        atividade["historico"].append(data)
+        print(f"\nAtividade '{atividade['nome']}' marcada como concluída em {data}!")
+
+        if atividade["tipo"] == "Tarefa":
+            atividades.pop(escolha)
+        #  linha para atividades únicas que depois de concluídas são apagadas do bd
 
 def historico(usuario):
     """Função que permite o usuário visualizar quantas vezes uma atividade foi concluída"""
-    listar_atividades(usuario)
+    mostrar_atividades(usuario)
     atividades = usuarios[usuario]["atividades"]
     if not atividades:
         return
 
     escolha = input("Escolha o número da atividade para visualizar o histórico: ").strip()
     if not escolha.isdigit() or int(escolha) not in range(1, len(atividades) + 1):
-        print("Opção inválida.")
+        print("\n *Opção inválida.")
         return
 
     escolha = int(escolha) - 1
-    historico = atividades[escolha]["historico"]
-    if not historico:
-        print("Nenhum histórico para esta atividade.")
-        return
+    atividade = atividades[escolha]
+    
+    if atividade["tipo"] == "Checklist":
+        # se for uma tarefa com checklist mostra o n° de itens concluídos
+        total_itens = len(atividade["checklist"])
+        itens_concluidos = sum(1 for item in atividade["checklist"] if item["concluido"])
+        print(f"\nHistórico da atividade {atividade['nome']}:")
+        print(f"Total de itens: {total_itens}")
+        print(f"Itens concluídos: {itens_concluidos}")
+        print(f"Itens pendentes: {total_itens - itens_concluidos}")
+    else:
+        # pra atividades sem checklist exibe o histórico de conclusão
+        historico = atividade["historico"]
+        if not historico:
+            print("\nNenhum histórico para esta atividade.")
+            return
 
-    print(f"\nHistórico da atividade '{atividades[escolha]['nome']}':")
-    for data in historico:
-        print(data)
-    print(f"Total: {len(historico)} vezes concluída.")
+        print(f"\nHistórico da atividade '{atividade['nome']}':")
+        for data in historico:
+            print(data)
+        print(f"\nTotal: {len(historico)} vezes concluída.")
+
 
 def menu():
     """Menu Principal"""
@@ -188,7 +293,7 @@ def menu():
         print("[1] Cadastro de Usuário")
         print("[2] Login")
         print("[3] Adicionar Atividade")
-        print("[4] Listar Atividades")
+        print("[4] Mostrar Atividades")
         print("[5] Editar ou Excluir Atividades")
         print("[6] Marcar Atividade como Concluída")
         print("[7] Visualizar Histórico")
@@ -206,7 +311,7 @@ def menu():
                 print("Faça login primeiro.") # caso o usuário tente usar alguma funcionalidade sem ter efetuado login
         elif opcao == "4":
             if usuario_atual:
-                listar_atividades(usuario_atual)
+                mostrar_atividades(usuario_atual)
             else:
                 print("Faça login primeiro.")
         elif opcao == "5":
@@ -228,6 +333,6 @@ def menu():
             print("Saindo...")
             break
         else:
-            print("Opção inválida. Tente novamente.")
+            print(" *Opção inválida. Tente novamente.")
 
 menu()
