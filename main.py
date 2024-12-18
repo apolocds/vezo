@@ -1,10 +1,5 @@
 # dicionário que serve como banco de dados
-usuarios = {
-    "apolo": {
-        "senha": "12345678",
-        "atividades": []
-    }
-}
+usuarios = {}
 
 def validar_senha(senha):
     """Função para validar a quantidade de caracteres inseridos pelo usuário"""
