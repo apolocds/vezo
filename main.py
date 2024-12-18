@@ -41,7 +41,6 @@ def cadastrar_usuario():
         print(f"Usuário '{nome}' cadastrado com sucesso!") # read
         break
 
-
 def login():
     """Função que define o usuário atual a partir da validação dos dados inseridos com os dados cadastrados"""
     print("\n--- Login ---")
@@ -202,7 +201,6 @@ def edit_delete_atividade(usuario): # update e delete
     else:
         print("\nAção inválida.")
 
-
 def marcar_concluida(usuario):
     """Função que permite ao usuário marcar as atividades como concluídas"""
     mostrar_atividades(usuario)
@@ -283,7 +281,6 @@ def historico(usuario):
         for data in historico:
             print(data)
         print(f"\nTotal: {len(historico)} vezes concluída.")
-
 
 def menu():
     """Menu Principal"""
