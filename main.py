@@ -1,13 +1,23 @@
+import os
+
 # dicionário que serve como banco de dados
-usuarios = {}
+usuarios = {
+    "apolo": {
+        "senha": "12345678",
+        "atividades": []
+    }
+}
 
 def validar_senha(senha):
     """Função para validar a quantidade de caracteres inseridos pelo usuário"""
     return len(senha) >= 8
 
+def clear():
+    os.system('cls')
+
 def cadastrar_usuario():
     """Função que insere os dados cadastrados pelo usuário no dicionário"""
-    print("\n--- Cadastro de Usuário ---")
+    print("\n————————— Cadastro de Usuário —————————")
     nome = None  # inicializa o nome como None fora do loop para o código saber se o nome já foi validado ou precisa ser solicitado novamente, pra evitar repetições desnecessárias
 
     while True:
@@ -34,11 +44,12 @@ def cadastrar_usuario():
 
         usuarios[nome] = {"senha": senha, "atividades": []} # create
         print(f"Usuário '{nome}' cadastrado com sucesso!") # read
+        clear()
         break
 
 def login():
     """Função que define o usuário atual a partir da validação dos dados inseridos com os dados cadastrados"""
-    print("\n--- Login ---")
+    print("\n———————————————— Login ————————————————")
     nome = input("Nome de usuário: ").strip()
     senha = input("Senha: ").strip()
     
@@ -50,7 +61,7 @@ def login():
 
 def adicionar_atividade(usuario):  # create
     """Função que adiciona uma atividade ao dicionário do usuário logado"""
-    print("\n--- Adicionar Atividade ---")
+    print("\n————————— Adicionar Atividade —————————")
     nome_atividade = input("\nNome da Atividade: ").strip()
     if not nome_atividade:
         print("\nNome da atividade não pode estar vazio.")
@@ -58,7 +69,7 @@ def adicionar_atividade(usuario):  # create
 
     print("\nTipo de Atividade:")
     print("[1] Hábito (atividade que se repete)")
-    print("[2] Tarefa (atividade única)")
+    print("[2] Tarefa única")
     print("[3] Checklist (lista de itens a serem concluídos)")
     tipo = input("\nEscolha o tipo: ").strip()
     
@@ -145,7 +156,7 @@ def adicionar_atividade(usuario):  # create
 
 def mostrar_atividades(usuario):  # read
     """Função que exibe as atividades do usuário e os itens do checklist"""
-    print("\n--- Atividades Cadastradas ---")
+    print("\n———————— Atividades Cadastradas ————————")
     atividades = usuarios[usuario]["atividades"]
 
     if not atividades:
@@ -159,13 +170,10 @@ def mostrar_atividades(usuario):  # read
         if atividade["tipo"] == "Checklist" and "checklist" in atividade:
             print("\n  Itens do Checklist:")
             for item in atividade["checklist"]:
-                status = "Concluído" if item["concluido"] else "Pendente"
+                status = "Concluído [\u2714 ]" if item["concluido"] else "Pendente [\u2716 ]"
                 print(f"    - {item['item']} ({status})")
 
 def edit_delete_atividade(usuario): # update e delete
-
-    # o edit está sem a opção de trocar uma tarefa única para um hábito, trocar os dias específicos de um hábito, adicionar itens a um checklist
-
     """Função que permite o usuário editar ou excluir atividades do dicionário"""
     mostrar_atividades(usuario)
     atividades = usuarios[usuario]["atividades"]
@@ -216,7 +224,7 @@ def marcar_concluida(usuario):
         print(f"\nAtividade: {atividade['nome']}")
         print("Itens do checklist:")
         for i, item in enumerate(atividade["checklist"], 1):
-            status = "Concluído" if item["concluido"] else "Pendente"
+            status = "Concluído [\u2714 ]" if item["concluido"] else "Pendente [\u2716 ]"
             print(f"[{i}] {item['item']} - {status}")
         
         # pergunta ao usuário qual item ele deseja marcar como concluído
@@ -258,7 +266,7 @@ def historico(usuario):
     atividade = atividades[escolha]
     
     if atividade["tipo"] == "Checklist":
-        # se for uma tarefa com checklist mostra o n° de itens concluídos
+        # se for uma atividade com checklist mostra o n° de itens concluídos
         total_itens = len(atividade["checklist"])
         itens_concluidos = sum(1 for item in atividade["checklist"] if item["concluido"])
         print(f"\nHistórico da atividade {atividade['nome']}:")
@@ -281,7 +289,8 @@ def menu():
     """Menu Principal"""
     usuario_atual = None
     while True:
-        print("\n--- Menu ---")
+        print("\n                 \U0001f570\n           ———— veZo ————")
+        print("——————————————————————————————————————")
         print("[1] Cadastro de Usuário")
         print("[2] Login")
         print("[3] Adicionar Atividade")
@@ -290,33 +299,41 @@ def menu():
         print("[6] Marcar Atividade como Concluída")
         print("[7] Visualizar Histórico")
         print("[0] Sair")
+        print("——————————————————————————————————————")
         
         opcao = input("Escolha uma opção: ").strip()
         if opcao == "1":
+            clear()
             cadastrar_usuario()
         elif opcao == "2":
+            clear()
             usuario_atual = login()
         elif opcao == "3":
+            clear()
             if usuario_atual:
                 adicionar_atividade(usuario_atual)
             else:
                 print("Faça login primeiro.") # caso o usuário tente usar alguma funcionalidade sem ter efetuado login
         elif opcao == "4":
+            clear()
             if usuario_atual:
                 mostrar_atividades(usuario_atual)
             else:
                 print("Faça login primeiro.")
         elif opcao == "5":
+            clear()
             if usuario_atual:
                 edit_delete_atividade(usuario_atual)
             else:
                 print("Faça login primeiro.")
         elif opcao == "6":
+            clear()
             if usuario_atual:
                 marcar_concluida(usuario_atual)
             else:
                 print("Faça login primeiro.")
         elif opcao == "7":
+            clear()
             if usuario_atual:
                 historico(usuario_atual)
             else:
@@ -325,6 +342,7 @@ def menu():
             print("Saindo...")
             break
         else:
+            clear()
             print(" *Opção inválida. Tente novamente.")
 
 menu()
