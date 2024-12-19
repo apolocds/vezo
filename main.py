@@ -1,5 +1,8 @@
 import os
 
+from colorama import init, Fore, Back, Style
+init()
+
 # dicionário que serve como banco de dados
 usuarios = {
     "apolo": {
@@ -13,7 +16,7 @@ def validar_senha(senha):
     return len(senha) >= 8
 
 def clear():
-    os.system('cls')
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 def cadastrar_usuario():
     """Função que insere os dados cadastrados pelo usuário no dicionário"""
@@ -170,8 +173,8 @@ def mostrar_atividades(usuario):  # read
         if atividade["tipo"] == "Checklist" and "checklist" in atividade:
             print("\n  Itens do Checklist:")
             for item in atividade["checklist"]:
-                status = "Concluído [\u2714 ]" if item["concluido"] else "Pendente [\u2716 ]"
-                print(f"    - {item['item']} ({status})")
+                status = Fore.LIGHTGREEN_EX+"(Concluído [ \u2714 ])" if item["concluido"] else Fore.RED+"(Pendente [ \u2716 ])"
+                print(Style.RESET_ALL+f"    - {item['item']} {status}")
 
 def edit_delete_atividade(usuario): # update e delete
     """Função que permite o usuário editar ou excluir atividades do dicionário"""
@@ -224,7 +227,7 @@ def marcar_concluida(usuario):
         print(f"\nAtividade: {atividade['nome']}")
         print("Itens do checklist:")
         for i, item in enumerate(atividade["checklist"], 1):
-            status = "Concluído [\u2714 ]" if item["concluido"] else "Pendente [\u2716 ]"
+            status = "Concluído [ \u2714 ]" if item["concluido"] else "Pendente [ \u2716 ]"
             print(f"[{i}] {item['item']} - {status}")
         
         # pergunta ao usuário qual item ele deseja marcar como concluído
@@ -289,9 +292,9 @@ def menu():
     """Menu Principal"""
     usuario_atual = None
     while True:
-        print("\n                 \U0001f570\n           ———— veZo ————")
+        print(Fore.WHITE+Style.BRIGHT+"\n                 \U0001f570\n           ———— veZo ————")
         print("——————————————————————————————————————")
-        print("[1] Cadastro de Usuário")
+        print(Style.RESET_ALL+Fore.WHITE+"[1] Cadastro de Usuário")
         print("[2] Login")
         print("[3] Adicionar Atividade")
         print("[4] Mostrar Atividades")
