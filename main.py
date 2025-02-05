@@ -4,12 +4,7 @@ from colorama import init, Fore, Back, Style
 init()
 
 # dicionário que serve como banco de dados
-usuarios = {
-    "apolo": {
-        "senha": "12345678",
-        "atividades": []
-    }
-}
+usuarios = {}
 
 def validar_senha(senha):
     """Função para validar a quantidade de caracteres inseridos pelo usuário"""
@@ -167,14 +162,14 @@ def mostrar_atividades(usuario):  # read
         return
 
     for i, atividade in enumerate(atividades, 1):
-        print(f"[{i}] {atividade['nome']} ({atividade['tipo']})")
+        print(Style.RESET_ALL+Fore.WHITE+f"[{i}] {atividade['nome']} ({atividade['tipo']})")
         
         # se a atividade for do tipo checklist exibe os itens
         if atividade["tipo"] == "Checklist" and "checklist" in atividade:
             print("\n  Itens do Checklist:")
             for item in atividade["checklist"]:
                 status = Fore.LIGHTGREEN_EX+"(Concluído [ \u2714 ])" if item["concluido"] else Fore.RED+"(Pendente [ \u2716 ])"
-                print(Style.RESET_ALL+f"    - {item['item']} {status}")
+                print(Style.RESET_ALL+Fore.WHITE+f"    - {item['item']} {status}")
 
 def edit_delete_atividade(usuario): # update e delete
     """Função que permite o usuário editar ou excluir atividades do dicionário"""
@@ -214,7 +209,7 @@ def marcar_concluida(usuario):
     if not atividades:
         return
 
-    escolha = input("\nEscolha o número da atividade que deseja marcar como concluída: ").strip()
+    escolha = input(Style.RESET_ALL+Fore.WHITE+"\nEscolha o número da atividade que deseja marcar como concluída: ").strip()
     if not escolha.isdigit() or int(escolha) not in range(1, len(atividades) + 1):
         print("\n *Opção inválida.")
         return
@@ -227,11 +222,10 @@ def marcar_concluida(usuario):
         print(f"\nAtividade: {atividade['nome']}")
         print("Itens do checklist:")
         for i, item in enumerate(atividade["checklist"], 1):
-            status = "Concluído [ \u2714 ]" if item["concluido"] else "Pendente [ \u2716 ]"
-            print(f"[{i}] {item['item']} - {status}")
-        
+            status = Fore.LIGHTGREEN_EX+"Concluído [ \u2714 ]" if item["concluido"] else Fore.RED+"Pendente [ \u2716 ]"
+            print(Style.RESET_ALL+Fore.WHITE+f"[{i}] {item['item']} - {status}")             
         # pergunta ao usuário qual item ele deseja marcar como concluído
-        item_escolhido = input("\nEscolha o número do item para marcar como concluído ou digite 'fim' para finalizar: ").strip()
+        item_escolhido = input(Style.RESET_ALL+Fore.WHITE+"\nEscolha o número do item para marcar como concluído ou digite 'fim' para finalizar: ").strip()
         if item_escolhido.lower() == "fim":
             print("\nOperação finalizada.")
             return
@@ -247,7 +241,7 @@ def marcar_concluida(usuario):
     else: # caso a atividade não seja do tipo checklist, marca a atividade como concluída normalmente
         data = input("\nInforme a data da conclusão: ").strip()
         atividade["historico"].append(data)
-        print(f"\nAtividade '{atividade['nome']}' marcada como concluída em {data}!")
+        print(f"\nAtividade '{atividade['nome']}' marcada como concluída: {data}!")
 
         if atividade["tipo"] == "Tarefa":
             atividades.pop(escolha)
