@@ -1,5 +1,5 @@
 import os
-
+from plyer import notification
 from colorama import init, Fore, Back, Style
 init()
 
@@ -12,6 +12,14 @@ def validar_senha(senha):
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
+
+def notificar(titulo, mensagem):
+    """Envia uma notificação para o usuário"""
+    notification.notify(
+        title=titulo,
+        message=mensagem,
+        timeout=10
+    )    
 
 def cadastrar_usuario():
     """Função que insere os dados cadastrados pelo usuário no dicionário"""
@@ -41,7 +49,11 @@ def cadastrar_usuario():
             continue
 
         usuarios[nome] = {"senha": senha, "atividades": []} # create
-        print(f"Usuário '{nome}' cadastrado com sucesso!") # read
+
+        print("\nCadastro realizado!", f"Bem-vindo ao veZo, {nome}!")
+
+        notificar("Cadastro realizado!", f"Bem-vindo ao veZo, {nome}!")
+
         clear()
         break
 
@@ -52,7 +64,8 @@ def login():
     senha = input("Senha: ").strip()
     
     if nome in usuarios and usuarios[nome]["senha"] == senha:
-        print(f"\nBem-vindo, {nome}!")
+        print(f"\nBem-vindo, {nome}!", "Não se esqueça de registrar suas atividades hoje!")
+        notificar(f"Bem-vindo, {nome}!", "Não se esqueça de registrar suas atividades hoje!")
         return nome
     print("\nCredenciais inválidas. Tente novamente.")
     return None
@@ -151,6 +164,8 @@ def adicionar_atividade(usuario):  # create
     })
 
     print(f"\nAtividade '{nome_atividade}' adicionada com sucesso!")
+
+    notificar("Atividade", f"'{nome_atividade}' adicionada com sucesso!")
 
 def mostrar_atividades(usuario):  # read
     """Função que exibe as atividades do usuário e os itens do checklist"""
