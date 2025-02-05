@@ -33,4 +33,4 @@ Ao iniciar o programa, o menu principal será exibido com as opções:
 7. Visualizar Histórico
 8. Sair
 
-Basta seguir as instruções no terminal para utilizar as funcionalidades do vezo
+Basta seguir as instruções no terminal para utilizar as funcionalidades, bom uso!
