@@ -13,7 +13,7 @@ def validar_senha(senha):
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def notificar(titulo, mensagem):
+def notificar(titulo, mensagem): # Função criada para a 2Va
     """Envia uma notificação para o usuário"""
     notification.notify(
         title=titulo,
