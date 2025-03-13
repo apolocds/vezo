@@ -1,5 +1,9 @@
 import os
+import re
+import smtplib
+import random
 from plyer import notification
+from email.mime.text import MIMEText
 from colorama import init, Fore, Back, Style
 init()
 
@@ -13,7 +17,7 @@ def validar_senha(senha):
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def notificar(titulo, mensagem): # Função criada para a 2Va
+def notificar(titulo, mensagem):
     """Envia uma notificação para o usuário"""
     notification.notify(
         title=titulo,
@@ -21,6 +25,36 @@ def notificar(titulo, mensagem): # Função criada para a 2Va
         timeout=10
     )    
 
+def validar_email(email):
+    """Função para validar o formato do e-mail"""
+    regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" 
+    return re.match(regex, email) is not None
+
+def enviar_codigo(email):
+    """Função que gera o código de verificação e envia automaticamente ao e-mail do usuário"""
+    codigo = str(random.randint(100000, 999999))
+
+    remetente = "apolocesards@gmail.com" #info pessoal 
+    senha_app = "lvlh etvc epwv yllg" #info pessoal
+    assunto = "Código de verificação veZo"
+    mensagem = f"Seu código de verificação é: {codigo}"
+
+    msg = MIMEText(mensagem, "plain", "utf-8") # trecho que formata e envia o e-mail com o código
+    msg["Subject"] = assunto
+    msg["From"] = remetente
+    msg["To"] = email
+
+    try:
+        with smtplib.SMTP("smtp.gmail.com", 587) as servidor:
+            servidor.starttls()
+            servidor.login(remetente, senha_app)
+            servidor.sendmail(remetente, email, msg.as_string())
+        print("Código enviado para seu e-mail!")
+        return codigo
+    except Exception as e:
+        print("Erro ao enviar e-mail:", e)
+        return None
+    
 def cadastrar_usuario():
     """Função que insere os dados cadastrados pelo usuário no dicionário"""
     print("\n————————— Cadastro de Usuário —————————")
@@ -48,7 +82,13 @@ def cadastrar_usuario():
             print("\nAs senhas não coincidem. Tente novamente.")
             continue
 
-        usuarios[nome] = {"senha": senha, "atividades": []} # create
+        # solicita o e-mail e valida usando 
+        email = input("\nDigite seu e-mail: ").strip()
+        while not validar_email(email):
+            print("\nE-mail inválido. Insira um e-mail válido.")
+            email = input("\nDigite seu e-mail: ").strip()
+
+        usuarios[nome] = {"senha": senha, "email": email, "atividades": []}  # create
 
         print("\nCadastro realizado!", f"Bem-vindo ao veZo, {nome}!")
 
@@ -57,13 +97,40 @@ def cadastrar_usuario():
         clear()
         break
 
+def autenticacao_2fa(email):
+    """Realiza a autenticação de dois fatores via e-mail"""
+    codigo_gerado = enviar_codigo(email)
+    if codigo_gerado:
+        # espera que o usuário insira o código enviado por e-mail
+        codigo_usuario = input("Digite o código de verificação enviado para o seu e-mail: ")
+        tentativas = 3  # limita o número de tentativas para 3
+        while tentativas > 0:
+            if codigo_usuario == codigo_gerado:
+                print("Autenticação bem-sucedida!")
+                return True
+            else:
+                tentativas -= 1
+                if tentativas > 0:
+                    print(f"Código incorreto. Você tem {tentativas} tentativas restantes.")
+                    codigo_usuario = input("Digite o código de verificação novamente: ")
+                else:
+                    print("Número de tentativas excedido. Autenticação falhou.")
+                    return False
+    return False
+
 def login():
     """Função que define o usuário atual a partir da validação dos dados inseridos com os dados cadastrados"""
     print("\n———————————————— Login ————————————————")
+    
     nome = input("Nome de usuário: ").strip()
     senha = input("Senha: ").strip()
-    
-    if nome in usuarios and usuarios[nome]["senha"] == senha:
+
+    email = input("Digite seu e-mail: ")
+    if not validar_email(email):
+        print("E-mail inválido. Tente novamente.")
+        return
+
+    if nome in usuarios and autenticacao_2fa(email) and usuarios[nome]["senha"] == senha: # valida se o nome e a senha estão cadastrados e que o procedimento de verificação em duas etapas foi bem sucedido
         print(f"\nBem-vindo, {nome}!", "Não se esqueça de registrar suas atividades hoje!")
         notificar(f"Bem-vindo, {nome}!", "Não se esqueça de registrar suas atividades hoje!")
         return nome
