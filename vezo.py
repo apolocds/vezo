@@ -34,8 +34,8 @@ def enviar_codigo(email):
     """Função que gera o código de verificação e envia automaticamente ao e-mail do usuário"""
     codigo = str(random.randint(100000, 999999))
 
-    remetente = "apolocesards@gmail.com" #info pessoal 
-    senha_app = "lvlh etvc epwv yllg" #info pessoal
+    remetente = x
+    senha_app = x
     assunto = "Código de verificação veZo"
     mensagem = f"Seu código de verificação é: {codigo}"
 
